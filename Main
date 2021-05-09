@@ -1,1 +1,42 @@
+#include<stdio.h>
+#include<stddef.h>
+#include "mymalloc.h"
 
+int main()
+{
+	int e;
+	printf("\n\t\t### LETS USE MALLOC AND FREE IN MY WAY !!! ### \n\n");
+ 	printf("# The HEAP starting Memory Address is = %d\n",&memory);
+ 	printf("\n");
+	
+	printf("\n --------------------------------- Struct ---------------------------------\n");
+	Block *p  = (void*)(Block*)MyMalloc(2*sizeof(*p));
+	printf("\t@ Size of The  block is = %d\n",sizeof(*p));
+	
+	printf("\n --------------------------------- CHAR ---------------------------------\n");
+	char *q = (char*)MyMalloc(250*sizeof(char));
+	printf("\t@ Size of the pointer q is :%d\n",sizeof(*q));
+	printf("\n");
+	
+	printf("\n --------------------------------- int ---------------------------------\n");
+	int *r  = (int*)MyMalloc(1000*sizeof(int));
+	printf("\t@ Size of the pointer r is :%d\n",sizeof(*r) );
+	printf("\n");
+	
+	printf("\n ###******************* Free char q  *******************###\n");
+	MyFree(q);
+	
+	printf("\n ###*******************  Free int r  *******************###\n");
+	MyFree(r);
+	
+	printf("\n ###******************* Free block p *******************###\n");
+	MyFree(p);
+	
+	printf("\n### --- Allocation and deallocation is done successfully! --- ###\n");
+	printf("\n\t\t\t### --- END OF THE PROCESS --- ###\n");
+	printf("Enter any number to exit...\n");
+ 	scanf("%d",&e);
+ 	
+ 	return 0;
+ 	
+}

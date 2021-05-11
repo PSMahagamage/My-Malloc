@@ -1,1 +1,118 @@
+// My-Malloc
+ 
+
+
+#include<stdio.h>
+#include<stddef.h>
+#include "mymalloc.h"
+
+
+Block *frblock = (void*)memory; 
+
+//Initi function(Initialize the memory block) 
+void initi()
+{
+	frblock->check = 1; //intitialize as free by 1 
+	frblock->size = 25000 - sizeof(Block);//intitialize the memory block  size 
+	frblock->next = NULL;//next block address pointer set to NULL
+}
+
+//Split Function(split a memory block when allocating if it is nessesary)
+void split(Block *slot, size_t size)
+{
+	Block *new = (void*)((void*)slot + size + sizeof(Block));
+	
+	new->size = (slot -> size)-size-sizeof(Block); 
+	new->check = 1; 
+	new->next = slot->next;
+	
+	slot->size = size;
+	slot->check = 0; 
+	slot->next = new;
+}
+
+//MyMalloc Function(Allocates memory)
+void *MyMalloc(size_t mem_size)
+{
+	Block *present, *pre;  
+	void *start_address;    
+	
+	if(!(frblock->size))
+	{
+		initi();
+		printf("# Memory is INITIALIZED...! \n");
+	}
+	present = frblock;  
+	while((((present->size < mem_size) || ((present -> check == 0)) && (present->next != NULL))))
+	{
+		pre = present;  
+		present = present->next; 
+		printf("# This Block is CHECKED !!!\n\n");  
+	}
+	if(present->check==1)
+	{
+		if((present->size) == mem_size)
+		{  
+			present->check = 0; 
+			start_address = (void*)(present++);
+			printf("@ Block is now ALLOCATED...!\n"); 
+			return start_address;  
+		}
+		else if((present->size) > (mem_size + sizeof(Block)))
+		{
+			split(present,mem_size);
+			start_address = (void*)(present++);
+			printf("@ Block is now ALLOCATED and SPLITED...!\n");
+			return start_address;
+		}
+	}	
+	else
+	{
+		start_address = NULL;  
+		printf("@ Sorry!!! There is NO memory to ALLOCATE...!\n");
+	}
+}
+
+//MyFree function(free the memory blocks) 
+void MyFree(void *ptr)
+{ 
+	if(((void*)memory <= ptr) && (ptr <= (void*)(memory+25000)))
+	{
+		Block *present = ptr;
+		
+		present = present - 1;
+		present->check = 1;
+		merge();
+		printf("\n\n# Successfully FREED the Block..!\n");
+	}
+	else
+	{
+		printf("\n\n# INVALID ADDRESS..!\n");
+	}
+}
+
+//Merge Function(merge the splited blocks when the are getting free)
+void merge()
+{
+	Block *present;
+	present = frblock; 
+	
+	while((present->next) != NULL)
+	{
+		if((present ->check) && (present->next->check))
+		{
+			present->size = present->size + ((present->next->size) + sizeof(struct block));
+			present->next = present->next->next;
+			
+		}
+		if(present ->next != NULL )
+		{
+			present = present->next;	
+		}
+		else 
+		{
+			break;
+		}
+	}
+}
 
